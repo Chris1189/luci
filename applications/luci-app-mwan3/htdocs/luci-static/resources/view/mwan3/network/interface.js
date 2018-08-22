@@ -296,6 +296,11 @@ return view.extend({
 				return _('No interface metric set!');
 		}
 
+		o = s.option(form.Value, 'online_metric', _('Online metric'),
+			'%s <br /> %s'.format(_('Metric of the dynamic default route set by mwan3 when the interface is online.'),
+				_('This is used for failover of router initiated traffic.')));
+		o.datatype = 'range(1, 65535)';
+
 		return m.render();
 	}
 })
