@@ -22,6 +22,7 @@ LUCI_DEPENDS:=\
 	+ucode \
 	+ucode-mod-fs \
 	+ucode-mod-log \
+	+ucode-mod-rtnl \
 	+ucode-mod-uci \
 	+ucode-mod-ubus \
 	+ucode-mod-math \

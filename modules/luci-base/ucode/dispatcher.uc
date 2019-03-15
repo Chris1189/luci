@@ -12,6 +12,7 @@ import { hash, load_catalog, change_catalog, translate, ntranslate, getuid } fro
 import { revision as luciversion, branch as luciname } from 'luci.version';
 import { default as LuCIRuntime } from 'luci.runtime';
 import { urldecode } from 'luci.http';
+import * as rtnl from 'rtnl';
 
 let ubus = connect();
 let uci = cursor();
@@ -494,20 +495,33 @@ function session_setup(user, pass, path) {
 		timeout:  timeout ? +timeout : null
 	});
 
+	let neighbours = rtnl.request(
+		rtnl.const.RTM_GETNEIGH,
+		rtnl.const.NLM_F_DUMP,
+		{
+			family: rtnl.const.AF_INET,
+		}
+	);
+
+	let mac;
+	for (let neigbour in neighbours)
+		if (neigbour.dst == http.getenv("REMOTE_ADDR"))
+			mac = neigbour.lladdr;
+
 	openlog('dispatcher.uc');
 	if (type(login?.ubus_rpc_session) == 'string') {
 		ubus.call("session", "set", {
 			ubus_rpc_session: login.ubus_rpc_session,
 			values: { token: randomid(16) }
 		});
-		syslog(LOG_INFO|LOG_AUTHPRIV, sprintf("luci: accepted login on /%s for %s from %s",
-			join('/', path), user || "?", http.getenv("REMOTE_ADDR") || "?"));
+		syslog(LOG_INFO|LOG_AUTHPRIV, sprintf("luci: accepted login on /%s for %s from %s [mac: %s]",
+			join('/', path), user || "?", http.getenv("REMOTE_ADDR") || "?", mac || "?"));
 
 		return session_retrieve(login.ubus_rpc_session);
 	}
 
-	syslog(LOG_WARNING|LOG_AUTHPRIV, sprintf("luci: failed login on /%s for %s from %s",
-		join('/', path), user || "?", http.getenv("REMOTE_ADDR") || "?"));
+	syslog(LOG_WARNING|LOG_AUTHPRIV, sprintf("luci: failed login on /%s for %s from %s [mac: %s]",
+		join('/', path), user || "?", http.getenv("REMOTE_ADDR") || "?", mac || "?"));
 
 	closelog();
 }
