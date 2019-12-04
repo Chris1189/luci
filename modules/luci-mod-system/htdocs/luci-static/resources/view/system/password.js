@@ -2,6 +2,7 @@
 'require view';
 'require dom';
 'require ui';
+'require uci';
 'require form';
 'require rpc';
 
@@ -20,6 +21,12 @@ var callSetPassword = rpc.declare({
 });
 
 return view.extend({
+	load: function() {
+		return Promise.all([
+			uci.load('luci'),
+		]);
+	},
+
 	checkPassword: function(section_id, value) {
 		var strength = document.querySelector('.cbi-value-description'),
 		    strongRegex = new RegExp("^(?=.{8,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\\W).*$", "g"),
@@ -74,6 +81,13 @@ return view.extend({
 		return dom.callClassMethod(map, 'save').then(function() {
 			if (formData.password.pw1 == null || formData.password.pw1.length == 0)
 				return;
+
+			var passwd_len = uci.get('luci', 'main', 'password_length') || "0";
+
+			if (formData.password.pw1.length < passwd_len || formData.password.pw2.length < passwd_len) {
+				ui.addNotification(null, E('p', _('The specified password does not have the permitted length!')), 'danger');
+				return;
+			}
 
 			if (formData.password.pw1 != formData.password.pw2) {
 				ui.addNotification(null, E('p', _('Given password confirmation did not match, password not changed!')), 'danger');
