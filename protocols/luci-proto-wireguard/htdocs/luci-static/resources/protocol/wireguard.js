@@ -6,6 +6,7 @@
 'require rpc';
 'require form';
 'require network';
+'require tools.widgets as widgets';
 'require validation';
 'require uqr';
 
@@ -163,6 +164,12 @@ return network.registerProtocol('wireguard', {
 		o.datatype = 'port';
 		o.placeholder = _('random');
 		o.optional = true;
+
+		o = s.taboption('general', widgets.ZoneSelect, 'allowed_zones',
+			_('Automatically open listen port'),
+			_('Optional. Automatically open the UDP listen port in the selected firewall zones for incoming WireGuard traffic related to this instance.'));
+		o.multiple = true;
+		o.depends({['listen_port']: '', ['!reverse']: true });
 
 		o = s.taboption('general', form.DynamicList, 'addresses', _('IP Addresses'), _('Recommended. IP addresses of the WireGuard interface.'));
 		o.datatype = 'ipaddr';
