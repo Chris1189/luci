@@ -6,19 +6,11 @@
 
 include $(TOPDIR)/rules.mk
 
-LUCI_TITLE:=Support for 464xlat/6in4/6rd/6to4/dhcpv6/dslite/map/ipip6
+LUCI_TITLE:=Support for 6in4
 LUCI_DEPENDS:=@IPV6 \
-	+luci-proto-464xlat \
-	+luci-proto-6in4 \
-	+luci-proto-6rd \
-	+luci-proto-6to4 \
-	+luci-proto-dhcpv6 \
-	+luci-proto-dslite \
-	+luci-proto-map \
-	+luci-proto-ipip6
+	+6in4
 
 PKG_LICENSE:=Apache-2.0
-PKG_MAINTAINER:=Jo-Philipp Wich <jo@mein.io>
 
 include ../../luci.mk
 
