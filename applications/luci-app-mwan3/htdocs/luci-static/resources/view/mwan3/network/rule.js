@@ -73,7 +73,7 @@ return view.extend({
 		o.value('icmp');
 		o.value('esp');
 
-		o = s.option(form.Value, 'src_ip', _('Source address'),
+		o = s.option(form.DynamicList, 'src_ip', _('Source address'),
 			_('Supports CIDR notation (eg \"192.168.100.0/24\") without quotes'));
 		o.datatype = 'ipaddr';
 
@@ -82,7 +82,7 @@ return view.extend({
 		o.depends('proto', 'tcp');
 		o.depends('proto', 'udp');
 
-		o = s.option(form.Value, 'dest_ip', _('Destination address'),
+		o = s.option(form.DynamicList, 'dest_ip', _('Destination address'),
 			_('Supports CIDR notation (eg \"192.168.100.0/24\") without quotes'));
 		o.datatype = 'ipaddr';
 
