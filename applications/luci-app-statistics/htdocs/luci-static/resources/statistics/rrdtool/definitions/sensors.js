@@ -112,6 +112,28 @@ return baseclass.extend({
 				}
 			});
 		}
+		if (types.indexOf('power') > -1) {
+			rv.push({
+				title: String.format('%s: %s on %s', '%H', _('System consumption'), '%pi'),
+				vlabel: _('Power [Watt]'),
+				y_min: "0",
+				alt_autoscale_max: true,
+				data: {
+					instances: {
+						power: [
+							"power1"
+						]
+					},
+					options: {
+						power_power1: {
+							title: _('Consumption'),
+							color: 'ff0000',
+							overlay: false
+						}
+					}
+				}
+			});
+		}
 
 		return rv;
 	}
