@@ -67,9 +67,7 @@ return L.Class.extend({
 				instances: {
 					bool: [
 						"bitswap_up",
-						"bitswap_down",
-						"vector_up",
-						"vector_down"
+						"bitswap_down"
 					]
 				},
 				options: {
@@ -80,16 +78,6 @@ return L.Class.extend({
 					},
 					bool_bitswap_down: {
 						title: _("Bitswap Down"),
-						noarea: true,
-						overlay: true
-					},
-					bool_vector_up: {
-						title: _("Vectoring Up"),
-						noarea: true,
-						overlay: true
-					},
-					bool_vector_down: {
-						title: _("Vectoring Down"),
 						noarea: true,
 						overlay: true
 					},
