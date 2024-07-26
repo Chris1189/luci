@@ -1,63 +1,106 @@
 // SPDX: Apache-2.0
 // Karl Palsson <karlp@etactica.com> 2021
-'use strict';
-'require form';
-'require ui';
-'require view';
+"use strict";
+"require form";
+"require ui";
+"require view";
 
-var desc = _(""
-    + "SNMPD is a master daemon/agent for SNMP, from the <a href='http://www.net-snmp.org'>"
-    + "net-snmp project</a>. "
-    + "Note, OpenWrt has mostly complete UCI support for snmpd, but this LuCI applet "
-    + "only covers a few of those options. In particular, there is very little/no validation "
-    + "or help. See /etc/config/snmpd for manual configuration."
-);
-
-return view.extend({
+return L.view.extend({
 	render: function() {
-		var m, s, o;
+		var m, s, o, g, go;
 
-		m = new form.Map("snmpd", _("net-snmp's SNMPD"), desc);
+		m = new form.Map("snmpd",
+			_("SNMP Settings"),
+			_("On this page you may configure SNMP settings"));
 
-		s = m.section(form.TypedSection, "agent", _("Agent settings"));
+		s = m.section(form.TypedSection, "snmpd");
 		s.anonymous = true;
-		o = s.option(form.Value, "agentaddress", _("The address the agent should listen on"),
+		s.addremove = false;
+
+		s.tab("general", _("SNMP - General"));
+
+		o = s.taboption("general", form.SectionValue, "__general__",
+			form.TypedSection, "system", null,
+			_("Here you can configure system settings"));
+
+		g = o.subsection;
+		g.anonymous = true;
+		g.addremove = false;
+
+		go = g.option(form.Value, "sysLocation", "sysLocation");
+		go = g.option(form.Value, "sysContact", "sysContact");
+		go = g.option(form.Value, "sysName", "sysName");
+
+		o = s.taboption("general", form.SectionValue, "__general__",
+			form.TypedSection, "snmpd", null,
+			_("Here you can configure agent settings"));
+
+		g = o.subsection;
+		g.anonymous = true;
+		g.addremove = false;
+
+		go = g.option(form.Flag, "enabled", _("Enable SNMP"),
+			_("Enable to use SNMP"));
+		go.default = "0";
+		go.rmempty = false;
+
+		go = g.option(form.Value, "agentaddress", _("The address the agent should listen on"),
 			_("Eg: UDP:161, or UDP:10.5.4.3:161 to only listen on a given interface"));
+		
 
-		s = m.section(form.TypedSection, "agentx", _("AgentX settings"),
-			_("Delete this section to disable AgentX"));
-		s.anonymous = true;
-		o = s.option(form.Value, "agentxsocket", _("The address the agent should allow AgentX connections to"),
+		go = g.option(form.Value,  "agentxsocket", _("The address the agent should allow AgentX connections to"),
 			_("This is only necessary if you have subagents using the agentX "
 			+ "socket protocol. Eg: /var/run/agentx.sock"));
-		s.addremove = true;
 
-		s = m.section(form.TypedSection, "com2sec", _("com2sec security"));
-		o = s.option(form.Value, "secname", "secname");
-		o = s.option(form.Value, "source", "source");
-		o = s.option(form.Value, "community", "community");
 
-		s = m.section(form.TypedSection, "group", "group", _("Groups help define access methods"));
-		s.addremove = true;
-		s.option(form.Value, "group", "group");
-		s.option(form.Value, "version", "version");
-		s.option(form.Value, "secname", "secname");
+		s.tab("advanced", _("Advanced Settings"));
 
-		s = m.section(form.TypedSection, "access", "access");
-		s.option(form.Value, "group", "group");
-		s.option(form.Value, "context", "context");
-		s.option(form.Value, "version", "version");
-		s.option(form.Value, "level", "level");
-		s.option(form.Value, "prefix", "prefix");
-		s.option(form.Value, "read", "read");
-		s.option(form.Value, "write", "write");
-		s.option(form.Value, "notify", "notify");
+		o = s.taboption("advanced", form.SectionValue, "__advanced__",
+			form.TypedSection, "com2sec", null,
+			_("Here you can configure com2sec options"));
 
-		s = m.section(form.TypedSection, "system", _("System"), _("Values used in the MIB2 System tree"));
-		s.anonymous = true;
-		s.option(form.Value, "sysLocation", "sysLocation");
-		s.option(form.Value, "sysContact", "sysContact");
-		s.option(form.Value, "sysName", "sysName");
+		g = o.subsection;
+		g.anonymous = true;
+		g.addremove = true;
+
+		go = g.option(form.Value, "secname", "secname");
+		go = g.option(form.Value, "source", "source");
+		go = g.option(form.Value, "community", "community");
+
+		o = s.taboption("advanced", form.SectionValue, "__advanced__",
+			form.TypedSection, "group", null,
+			_("Here you can configure group options"));
+
+		g = o.subsection;
+		g.anonymous = true;
+		g.addremove = true;
+
+		go = g.option(form.Value, "group", "group");
+		go = g.option(form.Value, "version", "version");
+		go = g.option(form.Value, "secname", "secname");
+
+		o = s.taboption("advanced", form.SectionValue, "__advanced__",
+			form.TypedSection, "access", null,
+			_("Here you can configure access options"));
+
+		g = o.subsection;
+		g.anonymous = true;
+		g.addremove = true;
+
+		go = g.option(form.Value, "group", "group");
+		go = g.option(form.Value, "context", "context");
+		go = g.option(form.Value, "version", "version");
+		go = g.option(form.Value, "level", "level");
+		go = g.option(form.Value, "prefix", "prefix");
+		go = g.option(form.Value, "read", "read");
+		go = g.option(form.Value, "write", "write");
+		go = g.option(form.Value, "notify", "notify");
+
+		s.tab("v2/v2c", _("SNMPv1/SNMPv2c"));
+
+		s.tab("v3", _("SNMPv3"));
+
+		s.tab("traps", _("Traps", "SNMP"));
 
 		return m.render();
 	}
