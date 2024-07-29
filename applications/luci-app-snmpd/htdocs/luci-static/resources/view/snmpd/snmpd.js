@@ -264,6 +264,51 @@ return L.view.extend({
 		};
 	},
 
+	populateAdvancedSettings(tab, s, data) {
+		var o, g, go;
+
+		o = s.taboption(tab, form.SectionValue, "__advanced__",
+			form.GridSection, "com2sec", null,
+			_("Here you can configure com2sec options"));
+
+		g = o.subsection;
+		g.anonymous = true;
+		g.addremove = true;
+
+		go = g.option(form.Value, "secname", "secname");
+		go = g.option(form.Value, "source", "source");
+		go = g.option(form.Value, "community", "community");
+
+		o = s.taboption("advanced", form.SectionValue, "__advanced__",
+			form.GridSection, "group", null,
+			_("Here you can configure group options"));
+
+		g = o.subsection;
+		g.anonymous = true;
+		g.addremove = true;
+
+		go = g.option(form.Value, "group", "group");
+		go = g.option(form.Value, "version", "version");
+		go = g.option(form.Value, "secname", "secname");
+
+		o = s.taboption("advanced", form.SectionValue, "__advanced__",
+			form.GridSection, "access", null,
+			_("Here you can configure access options"));
+
+		g = o.subsection;
+		g.anonymous = true;
+		g.addremove = true;
+
+		go = g.option(form.Value, "group", "group");
+		go = g.option(form.Value, "context", "context");
+		go = g.option(form.Value, "version", "version");
+		go = g.option(form.Value, "level", "level");
+		go = g.option(form.Value, "prefix", "prefix");
+		go = g.option(form.Value, "read", "read");
+		go = g.option(form.Value, "write", "write");
+		go = g.option(form.Value, "notify", "notify");
+	},
+
 	populateV1V2CSettings: function(subsection, desc, access, s, data) {
 		var g, go, o, community, community_src, mode, mask;
 
@@ -366,14 +411,12 @@ return L.view.extend({
 		go.rmempty = false;
 		go.default = 'SHA';
 
-		// SNMPv3 auth pass
 		go = g.option(form.Value, 'snmp_v3_auth_pass',
 			_('SNMPv3 authentication passphrase'));
 		go.password = true;
 		go.rmempty = false;
 		go.default = 'passphrase';
 
-		// SNMPv3 privacy/encryption type
 		go = g.option(form.ListValue, 'snmp_v3_privacy_type',
 			_('SNMPv3 encryption type'));
 		go.value('none', _('none'));
@@ -382,7 +425,6 @@ return L.view.extend({
 		go.rmempty = false;
 		go.default = 'AES';
 
-		// SNMPv3 privacy/encryption pass
 		go = g.option(form.Value, 'snmp_v3_privacy_pass',
 			_('SNMPv3 encryption passphrase'));
 		go.default = 'passphrase';
@@ -477,7 +519,6 @@ return L.view.extend({
 		g.anonymous = true;
 		g.addremove = true;
 
-		// File logging
 		go = g.option(form.Flag, 'log_file',
 			_('Enable logging to file'));
 		go.default = '0';
@@ -505,7 +546,6 @@ return L.view.extend({
 		go.value('d', 'LOG_DEBUG');
 		go.depends('log_file', '1');
 
-		// Syslog
 		go = g.option(form.Flag, 'log_syslog',
 			_('Enable logging to syslog'));
 		go.default = '0';
@@ -540,7 +580,6 @@ return L.view.extend({
 		go.value('i', 'LOG_INFO');
 		go.value('d', 'LOG_DEBUG');
 		go.depends('log_syslog', '1');
-
 	},
 
 	render: function(data) {
@@ -560,47 +599,7 @@ return L.view.extend({
 		this.populateGlobalSettings('general', s, data);
 
 		s.tab("advanced", _("Advanced Settings"));
-
-		o = s.taboption("advanced", form.SectionValue, "__advanced__",
-			form.TypedSection, "com2sec", null,
-			_("Here you can configure com2sec options"));
-
-		g = o.subsection;
-		g.anonymous = true;
-		g.addremove = true;
-
-		go = g.option(form.Value, "secname", "secname");
-		go = g.option(form.Value, "source", "source");
-		go = g.option(form.Value, "community", "community");
-
-		o = s.taboption("advanced", form.SectionValue, "__advanced__",
-			form.TypedSection, "group", null,
-			_("Here you can configure group options"));
-
-		g = o.subsection;
-		g.anonymous = true;
-		g.addremove = true;
-
-		go = g.option(form.Value, "group", "group");
-		go = g.option(form.Value, "version", "version");
-		go = g.option(form.Value, "secname", "secname");
-
-		o = s.taboption("advanced", form.SectionValue, "__advanced__",
-			form.TypedSection, "access", null,
-			_("Here you can configure access options"));
-
-		g = o.subsection;
-		g.anonymous = true;
-		g.addremove = true;
-
-		go = g.option(form.Value, "group", "group");
-		go = g.option(form.Value, "context", "context");
-		go = g.option(form.Value, "version", "version");
-		go = g.option(form.Value, "level", "level");
-		go = g.option(form.Value, "prefix", "prefix");
-		go = g.option(form.Value, "read", "read");
-		go = g.option(form.Value, "write", "write");
-		go = g.option(form.Value, "notify", "notify");
+		this.populateAdvancedSettings('advanced', s, data);
 
 		s.tab("v1/v2c", _("SNMPv1/SNMPv2c"));
 		this.populateV1V2CSettings('access_default', _('Communities for any hosts'), null, s, data);
