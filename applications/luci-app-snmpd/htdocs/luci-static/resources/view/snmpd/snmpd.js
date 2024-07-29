@@ -303,6 +303,73 @@ return L.view.extend({
 		}
 	},
 
+	populateV3Settings: function(tab, s, data){
+		var g, go, o;
+
+		o = s.taboption(tab, form.SectionValue, '__v3__',
+			form.GridSection, 'v3',
+			null, _('Here you can configure SNMPv3 settings'));
+
+		g = o.subsection;
+		g.anonymous = true;
+		g.addremove = true;
+
+		go = g.option(form.Value, 'snmp_v3_username',
+			_('SNMPv3 username'),
+			_('Set username to access SNMP'));
+		go.rmempty = false;
+		go.default = 'user';
+
+		go = g.option(form.Flag, 'snmp_v3_allow_write',
+			_('Allow write'));
+		go.rmempty = false;
+		go.default = '0';
+
+		go = g.option(form.ListValue, 'snmp_v3_auth_type',
+			_('SNMPv3 authentication type'));
+		go.value('none', _('none'));
+		go.value('SHA', _('SHA'));
+		go.value('MD5', _('MD5'));
+		go.rmempty = false;
+		go.default = 'SHA';
+
+		// SNMPv3 auth pass
+		go = g.option(form.Value, 'snmp_v3_auth_pass',
+			_('SNMPv3 authentication passphrase'));
+		go.password = true;
+		go.rmempty = false;
+		go.default = 'passphrase';
+
+		// SNMPv3 privacy/encryption type
+		go = g.option(form.ListValue, 'snmp_v3_privacy_type',
+			_('SNMPv3 encryption type'));
+		go.value('none', _('none'));
+		go.value('AES', _('AES'));
+		go.value('DES', _('DES'));
+		go.rmempty = false;
+		go.default = 'AES';
+
+		// SNMPv3 privacy/encryption pass
+		go = g.option(form.Value, 'snmp_v3_privacy_pass',
+			_('SNMPv3 encryption passphrase'));
+		go.default = 'passphrase';
+		go.password = true;
+
+		go = g.option(form.ListValue, 'RestrictOID',
+			_('OID-Restriction'));
+		go.value('no', _('No'));
+		go.value('yes', _('Yes'));
+		go.default = 'no';
+		go.optional = false;
+		go.rmempty = false;
+
+		this.oid = g.option(form.Value,
+			'RestrictedOID',
+			_('OID'));
+		this.oid.datatype = 'string';
+		this.oid.depends('RestrictOID', 'yes');
+	},
+
 	render: function(data) {
 		var m, s, o, g, go;
 
@@ -368,6 +435,7 @@ return L.view.extend({
 		this.populateV1V2CSettings('access_HostIP', _('Communities via IP-Address range'), 'HostIP', s, data);
 
 		s.tab("v3", _("SNMPv3"));
+		this.populateV3Settings('v3', s, data);
 
 		s.tab("traps", _("Traps", "SNMP"));
 
