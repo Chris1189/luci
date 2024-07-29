@@ -2,12 +2,29 @@
 // Karl Palsson <karlp@etactica.com> 2021
 "use strict";
 "require form";
+"require uci";
+"require fs";
+"require rpc";
 "require ui";
 "require view";
 
 return L.view.extend({
-	render: function() {
+	load: function() {
+		return Promise.all([
+			uci.load(["snmpd", "luci_snmpd"]).then(function() {
+				var mibFile = uci.get("luci_snmpd", "snmpd", "download_mib");
+				if (mibFile)
+					return L.resolveDefault(fs.stat(mibFile), null);
+				else
+					return Promise.resolve(null);
+			}),
+		]);
+	},
+
+	render: function(data) {
 		var m, s, o, g, go;
+
+		var mibStat = data[0];
 
 		m = new form.Map("snmpd",
 			_("SNMP Settings"),
@@ -26,6 +43,24 @@ return L.view.extend({
 		g = o.subsection;
 		g.anonymous = true;
 		g.addremove = false;
+
+		if (mibStat) {
+			go = g.option(form.Button, '__download', _('MIB download') );
+			go.inputtitle = _('Download (%1024.2mB)', 'Download data (action)').format(mibStat.size);
+			go.inputstyle = 'action';
+			go.onclick = ui.createHandlerFn(this, function(ev) {
+				return fs.read(mibStat.path).then(function(data) {
+					var url = URL.createObjectURL(new Blob([data], {
+						type: 'text/plain'}));
+
+					var link = document.createElement('a');
+					link.href = url;
+					link.download = mibStat.path.replace(/^.*[\\\/]/, '');
+					link.click();
+					return Promise.resolve();
+				});
+			});
+		}
 
 		go = g.option(form.Value, "sysLocation", "sysLocation");
 		go = g.option(form.Value, "sysContact", "sysContact");
