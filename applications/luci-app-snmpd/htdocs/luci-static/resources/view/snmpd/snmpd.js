@@ -33,6 +33,39 @@ return L.view.extend({
 		this.snmp_version = null;
 	},
 
+	trapsConfigure: function(t_enable, t_version, t_host, t_port, t_community) {
+		var traps = 0;
+		uci.sections('snmpd', 'trapsink', function(s) {
+			traps++;
+			if ((traps > 1) || (t_enable == '0') || (t_version !== 'v1')) {
+				uci.remove('snmpd', s['.name']);
+			}
+		});
+
+		traps = 0;
+		uci.sections('snmpd', 'trap2sink', function(s) {
+			traps++;
+			if ((traps > 1) || (t_enable == '0') || (t_version !== 'v2c')) {
+				uci.remove('snmpd', s['.name']);
+			}
+		});
+
+		if (t_enable == '1') {
+			var sink;
+			if (t_version == 'v1')
+				sink = 'trapsink';
+			else
+				sink = 'trap2sink';
+
+			var s = uci.get_first('snmpd', sink);
+			var sid = s ? s['.name'] : uci.add('snmpd', sink);
+
+			uci.set('snmpd', sid, 'community', t_community);
+			uci.set('snmpd', sid, 'host', t_host);
+			uci.set('snmpd', sid, 'port', t_port);
+		}
+	},
+
 	populateSystemSettings: function(tab, s, data) {
 		var g, go, o;
 
@@ -370,6 +403,69 @@ return L.view.extend({
 		this.oid.depends('RestrictOID', 'yes');
 	},
 
+	populateTrapsSettings: function(tab, s, data) {
+		var trap_enable;
+		var trap_snmp_version;
+		var trap_host;
+		var trap_port;
+		var trap_community;
+		var g, go, o;
+		
+		o = s.taboption(tab, form.SectionValue, '__traps__',
+			form.TableSection, tab, null,
+			_('Here you can configure Traps settings'));
+
+		g = o.subsection;
+		g.anonymous = true;
+		g.addremove = true;
+
+		trap_enable = g.option(form.Flag, 'trap_enabled',
+			_('Enable SNMP traps'),
+			_('Enable SNMP trap functionality'));
+		trap_enable.default = '0';
+		trap_enable.rmempty = false;
+		trap_enable.forcewrite = true;
+
+		trap_enable.write = L.bind(function(o, section_id, value) {
+			var t_version   = trap_snmp_version.formvalue(section_id);
+			var t_enable    = value;
+			var t_host      = trap_host.formvalue(section_id);
+			var t_port      = trap_port.formvalue(section_id);
+			var t_community = trap_community.formvalue(section_id);
+			this.trapsConfigure(t_enable, t_version, t_host, t_port, t_community);
+			uci.set('snmpd', section_id, o.alias || o.option, value);
+		}, this, trap_enable);
+
+		trap_snmp_version = g.option(form.ListValue, 'trap_snmp_version',
+			_('SNMP traps version'),
+			_('SNMP version used for sending traps'));
+		trap_snmp_version.value('v1', 'SNMPv1');
+		trap_snmp_version.value('v2c', 'SNMPv2c');
+		trap_snmp_version.default = 'v2c';
+
+		trap_host = g.option(form.Value, 'trap_host',
+			_('Host/IP'),
+			_('Host to transfer SNMP trap traffic to (hostname or IP address)'));
+		trap_host.datatype = 'host(0)';
+		trap_host.default = 'localhost';
+		trap_host.rmempty = false;
+
+		trap_port = g.option(form.Value, 'trap_port',
+			_('Port'),
+			_('Port for trap\'s host'));
+		trap_port.default = '162';
+		trap_port.datatype = 'port';
+		trap_port.rmempty = false;
+
+		trap_community = g.option(form.Value, 'trap_community',
+			_('Community'),
+			_('The SNMP community for traps'));
+		trap_community.value('public');
+		trap_community.value('private');
+		trap_community.default = 'public';
+		trap_community.rmempty = false;
+	},
+
 	render: function(data) {
 		var m, s, o, g, go;
 
@@ -438,7 +534,7 @@ return L.view.extend({
 		this.populateV3Settings('v3', s, data);
 
 		s.tab("traps", _("Traps", "SNMP"));
-
+		this.populateTrapsSettings('traps', s, data);
 		return m.render();
 	}
 });
