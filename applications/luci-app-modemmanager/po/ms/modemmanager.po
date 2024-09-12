@@ -1,0 +1,300 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Project-Id-Version: LDM-master-x 86_64\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: ms\n"
+"MIME-Version: 1.0\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:104
+msgid "Access Technologies"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:135
+msgid "Active"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:115
+msgid "Cell ID"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:114
+msgid "Cell Location"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:172
+msgid "Cellular Network"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:185
+msgid "Change"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/preload/modemmanager.js:102
+msgid "Close"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:142
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:160
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:175
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:213
+msgid "Current PIN"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:92
+msgid "Device Identifier"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:168
+msgid "Disable"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:150
+msgid "Enable"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:95
+msgid "Failed Reason"
+msgstr ""
+
+#: applications/luci-app-modemmanager/root/usr/share/rpcd/acl.d/luci-app-modemmanager.json:3
+msgid "Grant access to mmcli"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/preload/modemmanager.js:75
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:251
+msgid "ICCID"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/preload/modemmanager.js:91
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:90
+msgid "IMEI"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/preload/modemmanager.js:83
+msgid "IMSI"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:137
+msgid "Integrated Circuit Card Identifier"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:89
+msgid "International Mobile Station Equipment Identity"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:140
+msgid "International Mobile Subscriber Identity"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:118
+msgid "Location Area Code"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:86
+msgid "Manufacturer"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:121
+msgid "Mobile Country Code"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/status/include/31_modemmanager.js:47
+#: applications/luci-app-modemmanager/root/usr/share/luci/menu.d/luci-app-modemmanager.json:3
+#: applications/luci-app-modemmanager/root/usr/share/luci/menu.d/luci-app-modemmanager.json:15
+msgid "Mobile Network"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:124
+msgid "Mobile Network Code"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:284
+msgid "Mobile Service - Overview"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:102
+msgid "Mobile phone number"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:87
+msgid "Model"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/preload/modemmanager.js:33
+msgid "Modem"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:85
+msgid "Modem Info"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:101
+msgid "Network Registration"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:285
+msgid "No Modem found"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:322
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:165
+msgid "No mobile service status available."
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/preload/modemmanager.js:49
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:105
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/status/include/31_modemmanager.js:53
+msgid "Operator"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:106
+msgid "Operator Code"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:136
+msgid "Operator Name"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:197
+msgid "PIN"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:255
+msgid "PIN query status"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:81
+msgid "PIN successfully changed"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:37
+msgid "PIN successfully verified"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:195
+msgid "PUK"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:108
+msgid "Packet Service State"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:93
+msgid "Power State"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:107
+msgid "Registration State"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:268
+msgid "Remaining unblock tries"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:259
+msgid "Remaining verify tries"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:88
+msgid "Revision"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:247
+msgid "SIM"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:146
+msgid "SIM %d"
+msgstr ""
+
+#: applications/luci-app-modemmanager/root/usr/share/luci/menu.d/luci-app-modemmanager.json:27
+msgid "SIM configuration"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:234
+msgid "SIM missing"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:127
+msgid "SIM successfully unblocked"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:102
+msgid "SIM verification successfull"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:58
+msgid "SIM verification successfully disabled"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:148
+msgid "SIMs"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:46
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:69
+msgid "Section %s is empty."
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:109
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/status/include/31_modemmanager.js:60
+msgid "Signal Quality"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/preload/modemmanager.js:96
+msgid "Signal details"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/preload/modemmanager.js:41
+msgid "Signal strength"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:94
+msgid "State"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/preload/modemmanager.js:65
+msgid "Technology"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/preload/modemmanager.js:57
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:103
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/status/include/31_modemmanager.js:67
+msgid "Technology Generation"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:173
+msgid "This overview shows the current status of the mobile service."
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/status.js:127
+msgid "Tracking Area Code"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:84
+msgid "Unable to change PIN"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:61
+msgid "Unable to disable SIM protection"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:130
+msgid "Unable to unblock SIM"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:40
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:105
+msgid "Unable to verify PIN"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:204
+msgid "Unblock"
+msgstr ""
+
+#: applications/luci-app-modemmanager/htdocs/luci-static/resources/view/modemmanager/sim.js:221
+msgid "Unlock"
+msgstr ""
