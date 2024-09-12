@@ -1,0 +1,66 @@
+#!/bin/sh
+
+enable(){
+	mmcli -i "$sim" --pin "$pin" --enable-pin
+}
+
+disable(){
+	mmcli -i "$sim" --pin "$pin" --disable-pin
+}
+
+change(){
+	mmcli -i "$sim" --pin "$pin" --change-pin "$newpin"
+}
+
+unblock(){
+	mmcli -i "$sim" --pin "$pin" --puk "$puk"
+}
+
+verify(){
+	mmcli -i "$sim" --pin "$pin"
+}
+
+usage(){
+	echo "Available commands are:"
+	echo "enable: 	Enable SIM"
+	echo "disable:	Disable SIM"
+	echo "unblock:	Unblock SIM"
+	echo "change:	Change PIN"
+	echo "verify:	Verfiy PIN"
+	echo ""
+}
+
+main(){
+	local sim="$2"
+	local pin="$3"
+	local newpin
+	local puk
+
+	case "$1" in 
+		"enable")
+			enable "$sim" "$pin"
+			;;
+
+		"disable")
+			disable "$sim" "$pin"
+			;;
+
+		"change")
+			newpin="$4"
+			change "$sim" "$pin" "$newpin"
+			;;
+
+		"unblock")
+			puk="$4"
+			unblock "$sim" "$pin" "$puk"
+			;;
+
+		"verify")
+			verify "$sim" "$pin"
+			;;
+		*)
+			usage
+			;;
+	esac
+}
+main $@

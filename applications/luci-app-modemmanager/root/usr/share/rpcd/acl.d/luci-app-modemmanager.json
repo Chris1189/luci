@@ -1,0 +1,17 @@
+{
+	"luci-app-modemmanager": {
+		"description": "Grant access to mmcli",
+		"read": {
+			"cgi-io": [ "exec" ],
+			"file": {
+				"/usr/libexec/modemmanager/sim": [ "exec" ]
+			},
+			"ubus" : {
+				"network.modemmanager.modem": [ "dump" ],
+				"network.modemmanager.modem.*": [ "get-location" ],
+				"network.modemmanager.sim": [ "dump" ],
+				"network.modemmanager.sim.*": [ "dump" ]
+			}
+		}
+	}
+}
