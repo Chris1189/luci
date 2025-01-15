@@ -1,0 +1,107 @@
+#!/usr/bin/env lua
+
+local logger = require("nixio")
+local jsonc = require("luci.jsonc")
+
+local function log_msg(priority, msg)
+	local pid
+	local sys_msg
+
+	pid = logger.getpid()
+	sys_msg = string.format("%s (%s) vendor: %s", os.date(), pid, msg)
+	logger.syslog(priority, sys_msg)
+end
+
+local function err(msg)
+	log_msg("err", msg)
+end
+
+local function warning(msg)
+	log_msg("warning", msg)
+end
+
+local function info(msg)
+	log_msg("info", msg)
+end
+
+
+local function ip_get_Hosts_table()
+	local iptable
+	local json
+	local f
+	local success
+
+	f = io.popen("ubus call luci-rpc getHostHints")
+	json = f:read("*a")
+	success, iptable = pcall(jsonc.parse, json)
+
+	if not success then
+		err(string.format([[Error while parsing ip route.]]))
+		f:close()
+	end
+	f:close()
+	return iptable
+end
+
+local function perform_lookup(mac)
+	local vendor
+	local f
+
+	f = io.popen(string.format(
+		"/bin/grep -i -e %s /usr/share/nmap/nmap-mac-prefixes",
+		mac))
+	vendor = f:read()
+
+	if vendor then
+		vendor = string.sub(vendor, 8, -1)
+		return vendor
+	end
+end
+
+local function create_mac_table(tab)
+	local mac_list
+	local oui
+	local vendor
+	local count
+
+	mac_list = {}
+	count = 1
+
+	for i,j in pairs(tab) do
+		oui = string.gsub(i, ':', ''):sub(1,6)
+		vendor = perform_lookup(oui)
+		table.insert(mac_list,
+			{ lladdr = i, vendor = "",
+			 ip4 = "", ip6 = "", name = ""})
+
+		if j.ipaddrs then
+			mac_list[count].ip4 = j.ipaddrs[1]
+		end
+
+		if j.ip6addrs then
+			mac_list[count].ip6 = j.ip6addrs[1]
+		end
+
+		if j.name then
+			mac_list[count].name = j.name
+		end
+
+		if vendor then
+			mac_list[count].vendor = vendor
+		end
+
+		count = count + 1
+	end
+	return mac_list
+end
+
+local function main()
+	local content
+	local mac_list 
+
+	content = ip_get_Hosts_table()
+	mac_list = create_mac_table(content)
+	print(jsonc.stringify(mac_list))
+end
+
+main()

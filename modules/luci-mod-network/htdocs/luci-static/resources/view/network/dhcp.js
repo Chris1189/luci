@@ -4,6 +4,7 @@
 'require poll';
 'require rpc';
 'require uci';
+'require fs';
 'require form';
 'require network';
 'require validation';
@@ -212,12 +213,15 @@ function validateServerSpec(sid, s) {
 function expandAndFormatMAC(macs) {
 	let result = [];
 
-	macs.forEach(mac => {
+	macs.forEach(elem => {
+		const [mac, ...vendorParts] = elem.split(' ');
+		const vendor = vendorParts.join(' ');
+
 		if (isValidMAC(mac)) {
 			const expandedMac = mac.split(':').map(part => {
 				return (part.length === 1 && part !== '*') ? '0' + part : part;
 			}).join(':').toUpperCase();
-			result.push(expandedMac);
+			result.push(expandedMac + " " + vendor);
 		}
 	});
 
@@ -278,7 +282,8 @@ return view.extend({
 			callDUIDHints(),
 			getDHCPPools(),
 			network.getNetworks(),
-			uci.load('firewall')
+			uci.load('firewall'),
+			L.resolveDefault(fs.exec('/usr/libexec/vendorDHCP'), {})
 		]);
 	},
 
@@ -288,6 +293,7 @@ return view.extend({
 		    duids = hosts_duids_pools[1],
 		    pools = hosts_duids_pools[2],
 		    networks = hosts_duids_pools[3],
+		    macdata = JSON.parse(hosts_duids_pools[5].stdout) || '',
 		    m, s, o, ss, so, dnss;
 
 		let noi18nstrings = {
@@ -1195,17 +1201,27 @@ return view.extend({
 		so.rmempty  = true;
 		so.cfgvalue = function(section) {
 			var macs = uci.get('dhcp', section, 'mac');
+
+			macdata.forEach((element) => {
+				var index = macs.indexOf(element.lladdr);
+				if (index > -1){
+					var hint;
+					hint = element.vendor || element.ip4 || element.ip6;
+					macs[index] += ` (${hint})`
+				}
+			});
+
 			if(!Array.isArray(macs)){
-				return expandAndFormatMAC(L.toArray(macs));
+				return expandAndFormatMAC(Array(macs));
 			} else {
 				return expandAndFormatMAC(macs);
 			}
 		};
 		//removed jows renderwidget function which hindered multi-mac entry
 		so.validate = validateMACAddr.bind(so, pools);
-		Object.keys(hosts).forEach(function(mac) {
-			var hint = hosts[mac].name || L.toArray(hosts[mac].ipaddrs || hosts[mac].ipv4)[0];
-			so.value(mac, hint ? '%s (%s)'.format(mac, hint) : mac);
+		macdata.forEach(function(data) {
+			var hint = data.vendor || data.ip4 || data.ip6;
+			so.value(data.lladdr, hint ? '%s (%s)'.format(data.lladdr, hint) : data.lladdr);
 		});
 
 		so = ss.option(form.Value, 'ip', _('IPv4 address'), _('The IP address to be used for this host, or <em>ignore</em> to ignore any DHCP request from this host.'));
@@ -1311,6 +1327,7 @@ return view.extend({
 					cbi_update_table(mapEl.querySelector('#lease_status_table'),
 						leases.map(function(lease) {
 							var exp;
+							var vendor;
 
 							if (lease.expires === false)
 								exp = E('em', _('unlimited'));
@@ -1318,6 +1335,16 @@ return view.extend({
 								exp = E('em', _('expired'));
 							else
 								exp = '%t'.format(lease.expires);
+
+							macdata.forEach(function(elem) {
+								var elements;
+
+								elements = Object.values(elem);
+
+								if (elements.includes(lease.macaddr)) {
+									vendor = elem.vendor ? ` (${elem.vendor})` : null;
+								}
+							})
 
 							var hint = lease.macaddr ? hosts[lease.macaddr] : null,
 							    name = hint ? hint.name : null,
@@ -1331,7 +1358,7 @@ return view.extend({
 							return [
 								host || '-',
 								lease.ipaddr,
-								lease.macaddr,
+								vendor ? lease.macaddr + vendor : lease.macaddr,
 								exp
 							];
 						}),

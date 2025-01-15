@@ -38,7 +38,9 @@ return view.extend({
 			L.resolveDefault(fs.exec('/sbin/ip', [ '-4', 'rule', 'show' ]), {}),
 			L.resolveDefault(fs.exec('/sbin/ip', [ '-6', 'neigh', 'show' ]), {}),
 			L.resolveDefault(fs.exec('/sbin/ip', [ '-6', 'route', 'show', 'table', 'all' ]), {}),
-			L.resolveDefault(fs.exec('/sbin/ip', [ '-6', 'rule', 'show' ]), {})
+			L.resolveDefault(fs.exec('/sbin/ip', [ '-6', 'rule', 'show' ]), {}),
+			L.resolveDefault(fs.exec('/usr/libexec/vendor', ['4']), {}),
+			L.resolveDefault(fs.exec('/usr/libexec/vendor', ['6']), {}),
 		]);
 	},
 
@@ -84,8 +86,9 @@ return view.extend({
 		return matching_iface;
 	},
 
-	parseNeigh: function(s, networks, v6) {
+	parseNeigh: function(s, id, networks, v6) {
 		var lines = s.trim().split(/\n/),
+		    ids = id.trim().split(/\n/),
 		    res = [];
 
 		for (var i = 0; i < lines.length; i++) {
@@ -107,11 +110,10 @@ return view.extend({
 
 			res.push([
 				addr,
-				flags.lladdr.toUpperCase(),
+				ids[i],
 				E('span', { 'class': 'ifacebadge' }, [ net ? net : '(%s)'.format(flags.dev) ])
 			]);
 		}
-
 		return res;
 	},
 
@@ -173,7 +175,10 @@ return view.extend({
 		    ip4rule = data[3].stdout || '',
 		    ip6neigh = data[4].stdout || '',
 		    ip6route = data[5].stdout || '',
-		    ip6rule = data[6].stdout || '';
+		    ip6rule = data[6].stdout || '',
+		    vendorid4 = data[7].stdout || '',
+		    vendorid6 = data[8].stdout || '';
+		
 
 		var device_title = _('Which is used to access this %s').format(_('Target'));
 		var target_title = _('Network and its mask that define the size of the destination');
@@ -235,7 +240,7 @@ return view.extend({
 			])
 		]);
 
-		cbi_update_table(neigh4tbl, this.parseNeigh(ip4neigh, networks, false),
+		cbi_update_table(neigh4tbl, this.parseNeigh(ip4neigh, vendorid4, networks, false),
 			E('em', _('No entries available'))
 		);
 		cbi_update_table(route4tbl, this.parseRoute(ip4route, networks, false),
@@ -244,7 +249,7 @@ return view.extend({
 		cbi_update_table(rule4tbl, this.parseRule(ip4rule, networks, false),
 			E('em', _('No entries available'))
 		);
-		cbi_update_table(neigh6tbl, this.parseNeigh(ip6neigh, networks, true),
+		cbi_update_table(neigh6tbl, this.parseNeigh(ip6neigh, vendorid6, networks, true),
 			E('em', _('No entries available'))
 		);
 		cbi_update_table(route6tbl, this.parseRoute(ip6route, networks, true),

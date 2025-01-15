@@ -34,6 +34,9 @@
 		"read": {
 			"ubus": {
 				"luci-rpc": [ "getDHCPLeases" ]
+			},
+			"file": {
+				"/usr/libexec/vendor *": [ "exec" ]
 			}
 		}
 	},

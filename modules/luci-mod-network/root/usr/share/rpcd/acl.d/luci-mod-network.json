@@ -40,7 +40,10 @@
 			"ubus": {
 				"luci-rpc": [ "getDHCPLeases", "getDUIDHints", "getHostHints" ]
 			},
-			"uci": [ "dhcp" ]
+			"uci": [ "dhcp" ],
+			"file": {
+				"/usr/libexec/vendorDHCP": [ "exec" ]
+			}
 		},
 		"write": {
 			"uci": [ "dhcp" ]

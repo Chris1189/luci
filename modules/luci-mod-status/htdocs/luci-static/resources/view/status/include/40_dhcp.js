@@ -1,6 +1,7 @@
 'use strict';
 'require baseclass';
 'require rpc';
+'require fs';
 'require uci';
 'require network';
 'require validation';
@@ -21,7 +22,8 @@ return baseclass.extend({
 		return Promise.all([
 			callLuciDHCPLeases(),
 			network.getHostHints(),
-			L.resolveDefault(uci.load('dhcp'))
+			L.resolveDefault(uci.load('dhcp')),
+			L.resolveDefault(fs.exec('/usr/libexec/vendor', ['4']), {}),
 		]);
 	},
 
@@ -64,7 +66,8 @@ return baseclass.extend({
 		    leases6 = Array.isArray(data[0].dhcp6_leases) ? data[0].dhcp6_leases : [],
 		    machints = data[1].getMACHints(false),
 		    hosts = uci.sections('dhcp', 'host'),
-		    isReadonlyView = !L.hasViewPermission();
+		    isReadonlyView = !L.hasViewPermission(),
+		    macdata = data[3].stdout || '';
 
 		for (var i = 0; i < hosts.length; i++) {
 			var host = hosts[i];
@@ -94,6 +97,14 @@ return baseclass.extend({
 
 		cbi_update_table(table, leases.map(L.bind(function(lease) {
 			var exp, rows;
+			var ids = macdata.trim().split(/\n/);
+			var vendor;
+
+			for (var i = 0; i < ids.length; i++){
+				if (ids[i].includes(lease.macaddr)) {
+					vendor = ` ${ids[i].substring(18)}`
+				}
+			}
 
 			if (lease.expires === false)
 				exp = E('em', _('unlimited'));
@@ -101,6 +112,7 @@ return baseclass.extend({
 				exp = E('em', _('expired'));
 			else
 				exp = '%t'.format(lease.expires);
+
 
 			var hint = lease.macaddr ? machints.filter(function(h) { return h[0] == lease.macaddr })[0] : null,
 			    host = null;
@@ -113,7 +125,7 @@ return baseclass.extend({
 			rows = [
 				host || '-',
 				lease.ipaddr,
-				lease.macaddr,
+				vendor ? lease.macaddr + vendor : lease.macaddr,
 				exp
 			];
 

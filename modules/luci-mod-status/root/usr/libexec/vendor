@@ -1,0 +1,101 @@
+#!/usr/bin/env lua
+
+local logger = require("nixio")
+local jsonc = require("luci.jsonc")
+
+local function log_msg(priority, msg)
+	local pid
+	local sys_msg
+
+	pid = logger.getpid()
+	sys_msg = string.format("%s (%s) vendor: %s", os.date(), pid, msg)
+	logger.syslog(priority, sys_msg)
+end
+
+local function err(msg)
+	log_msg("err", msg)
+end
+
+local function warning(msg)
+	log_msg("warning", msg)
+end
+
+local function info(msg)
+	log_msg("info", msg)
+end
+
+
+local function ip_get_route_table(version)
+	local iptable
+	local json
+	local f
+	local success
+
+	f = io.popen(string.format(
+		"/sbin/ip -j -%s neigh show", version))
+	json = f:read()
+	success, iptable = pcall(jsonc.parse, json)
+
+	if not success then
+		err(string.format([[Error while parsing ip route.]]))
+		f:close()
+	end
+	f:close()
+	return iptable
+end
+
+local function perform_lookup(mac)
+	local vendor
+	local f
+
+	f = io.popen(string.format(
+		"/bin/grep -i -e %s /usr/share/nmap/nmap-mac-prefixes",
+		mac))
+	vendor = f:read()
+
+	if vendor then
+		vendor = string.sub(vendor, 8, -1)
+		return vendor
+	end
+end
+
+local function create_mac_table(tab)
+	local mac_list
+	local oui
+	local vendor
+	local pattern
+
+	pattern = "^fe[89a-f][0-9a-f]:"
+	mac_list = {}
+
+	for i,j in ipairs(tab) do
+		if j.dst and j.state[1] ~= "FAILED"
+			and not string.match(j.dst, pattern) then
+				oui = string.gsub(j.lladdr, ':', ''):sub(1,6)
+				vendor = perform_lookup(oui)
+				table.insert(mac_list,
+					{ lladdr = j.lladdr, vendor = ""})
+			if vendor then
+				mac_list[i].vendor = vendor
+			end
+		end
+	end
+	return mac_list
+end
+
+local function main()
+	local version = arg[1]
+	local content
+	local mac_list 
+
+	content = ip_get_route_table(version)
+	mac_list = create_mac_table(content)
+
+	for i,j in ipairs(mac_list) do
+		print(string.format("%s (%s)",
+			string.upper(j.lladdr),
+			j.vendor))
+	end
+end
+
+main()
