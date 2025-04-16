@@ -120,6 +120,8 @@ local function create_mac_table(tab)
 
 		if vendor_table[i:lower()] then
 			mac_list[count].vendor = vendor_table[i:lower()]
+		elseif i:match("^00:01:49.*$") then
+			mac_list[count].vendor = "TDT AG"
 		end
 
 		count = count + 1
