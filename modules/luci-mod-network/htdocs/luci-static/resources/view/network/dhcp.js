@@ -9,7 +9,7 @@
 'require validation';
 'require tools.widgets as widgets';
 
-var callHostHints, callDUIDHints, callDHCPLeases, CBILeaseStatus, CBILease6Status;
+var callHostHints, callDUIDHints, callDHCPLeases, callUfpList, CBILeaseStatus, CBILease6Status;
 
 callHostHints = rpc.declare({
 	object: 'luci-rpc',
@@ -26,6 +26,13 @@ callDUIDHints = rpc.declare({
 callDHCPLeases = rpc.declare({
 	object: 'luci-rpc',
 	method: 'getDHCPLeases',
+	expect: { '': {} }
+});
+
+callUfpList = rpc.declare({
+	object: 'fingerprint',
+	method: 'fingerprint',
+	params: [ "macaddr", "weight", "local" ],
 	expect: { '': {} }
 });
 
@@ -212,12 +219,14 @@ function validateServerSpec(sid, s) {
 function expandAndFormatMAC(macs) {
 	let result = [];
 
-	macs.forEach(mac => {
+	macs.forEach(elem => {
+		const [mac, vendor] = elem.split(' ');
+
 		if (isValidMAC(mac)) {
 			const expandedMac = mac.split(':').map(part => {
 				return (part.length === 1 && part !== '*') ? '0' + part : part;
 			}).join(':').toUpperCase();
-			result.push(expandedMac);
+			result.push(expandedMac + " " + vendor);
 		}
 	});
 
@@ -278,7 +287,8 @@ return view.extend({
 			callDUIDHints(),
 			getDHCPPools(),
 			network.getNetworks(),
-			uci.load('firewall')
+			uci.load('firewall'),
+			callUfpList(null, null, null)
 		]);
 	},
 
@@ -288,6 +298,7 @@ return view.extend({
 		    duids = hosts_duids_pools[1],
 		    pools = hosts_duids_pools[2],
 		    networks = hosts_duids_pools[3],
+		    macdata = hosts_duids_pools[5],
 		    m, s, o, ss, so, dnss;
 
 		let noi18nstrings = {
@@ -1194,7 +1205,17 @@ return view.extend({
 		//As a special case, in DHCPv4, it is possible to include more than one hardware address. eg: --dhcp-host=11:22:33:44:55:66,12:34:56:78:90:12,192.168.0.2 This allows an IP address to be associated with multiple hardware addresses, and gives dnsmasq permission to abandon a DHCP lease to one of the hardware addresses when another one asks for a lease
 		so.rmempty  = true;
 		so.cfgvalue = function(section) {
-			var macs = uci.get('dhcp', section, 'mac');
+			var macs = uci.get('dhcp', section, 'mac') || [];
+
+			for (var mac in macdata) {
+				var index = macs.indexOf(mac.toUpperCase());
+				if (index > -1) {
+					var hint;
+					hint = macdata[mac].vendor || _("Unknown");
+					macs[index] += ` (${hint})`
+				}
+			}
+
 			if(!Array.isArray(macs)){
 				return expandAndFormatMAC(L.toArray(macs));
 			} else {
@@ -1311,6 +1332,7 @@ return view.extend({
 					cbi_update_table(mapEl.querySelector('#lease_status_table'),
 						leases.map(function(lease) {
 							var exp;
+							var vendor;
 
 							if (lease.expires === false)
 								exp = E('em', _('unlimited'));
@@ -1318,6 +1340,13 @@ return view.extend({
 								exp = E('em', _('expired'));
 							else
 								exp = '%t'.format(lease.expires);
+
+							for (var mac in macdata) {
+								if (mac.toUpperCase() === lease.macaddr) {
+									vendor = macdata[mac].vendor ?
+										` (${macdata[mac].vendor})` : null;
+								}
+							}
 
 							var hint = lease.macaddr ? hosts[lease.macaddr] : null,
 							    name = hint ? hint.name : null,
@@ -1331,7 +1360,7 @@ return view.extend({
 							return [
 								host || '-',
 								lease.ipaddr,
-								lease.macaddr,
+								vendor ? lease.macaddr + vendor : lease.macaddr,
 								exp
 							];
 						}),
