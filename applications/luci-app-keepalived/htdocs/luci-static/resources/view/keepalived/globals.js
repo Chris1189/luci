@@ -12,6 +12,9 @@ return view.extend({
 		s.anonymous = true;
 		s.addremove = false;
 
+		o = s.option(form.Flag, "enabled", _("Enable"),_('Enable Keepalived service'));
+		o.default = "1";
+
 		o = s.option(form.Value, 'router_id', _('Router ID'),
 			_('String identifying the machine (need not be hostname)'));
 		o.optional = true;
