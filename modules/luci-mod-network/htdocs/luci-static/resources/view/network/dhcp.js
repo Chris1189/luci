@@ -9,9 +9,9 @@
 'require validation';
 'require tools.widgets as widgets';
 'require tools.dnsrecordhandlers as drh';
+'require tools.ufphandler as ufp';
 
 var callHostHints, callDUIDHints, callDHCPLeases, CBILeaseStatus, CBILease6Status;
-var callUfpList;
 
 callHostHints = rpc.declare({
 	object: 'luci-rpc',
@@ -28,12 +28,6 @@ callDUIDHints = rpc.declare({
 callDHCPLeases = rpc.declare({
 	object: 'luci-rpc',
 	method: 'getDHCPLeases',
-	expect: { '': {} }
-});
-
-callUfpList = rpc.declare({
-	object: 'fingerprint',
-	method: 'fingerprint',
 	expect: { '': {} }
 });
 
@@ -288,7 +282,7 @@ return view.extend({
 			callDUIDHints(),
 			getDHCPPools(),
 			network.getNetworks(),
-			callUfpList(),
+			ufp.callUfpList(),
 			uci.load('firewall')
 		]);
 	},
