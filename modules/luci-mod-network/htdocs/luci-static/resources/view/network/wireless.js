@@ -15,9 +15,8 @@ const isReadonlyView = !L.hasViewPermission();
 
 function check_password_strength(section_id, value) {
 	var strength = document.querySelector('[data-name="_wpa_key"]'),
-	strongRegex = new RegExp("^(?=.{8,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\\W).*$", "g"),
-	mediumRegex = new RegExp("^(?=.{7,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))).*$", "g"),
-	enoughRegex = new RegExp("(?=.{6,}).*", "g");
+	strongRegex = new RegExp("^(?=.{9,})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*\\W).*$", "g"),
+	mediumRegex = new RegExp("^(?=.{8,})(((?=.*[A-Z])(?=.*[a-z]))|((?=.*[A-Z])(?=.*[0-9]))|((?=.*[a-z])(?=.*[0-9]))|((?=.*[A-Z])(?=.*\\W))|((?=.*[a-z])(?=.*\\W))|((?=.*[0-9])(?=.*\\W))).*$", "g"),
 
 	if (strength && value.length) {
 		var strengthChild = strength.childNodes[1].childNodes[1];
