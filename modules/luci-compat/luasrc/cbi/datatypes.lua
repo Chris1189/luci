@@ -218,6 +218,16 @@ function macaddr(val)
 	return ip.checkmac(val) and true or false
 end
 
+function macrange(val)
+	local range, _, mac1, _, mac2 = val:match("^(([0-9a-fA-F]{1,2}[:-]){5}[0-9a-fA-F]{1,2})%-(([0-9a-fA-F]{1,2}[:-]){5}[0-9a-fA-f]{1,2})")
+
+	if ip.checkmac(mac1) and ip.checkmac(mac2) then
+		return true
+	else
+		return false
+	end
+end
+
 function hostname(val, strict)
 	if val and (#val < 254) and (
 	   val:match("^[a-zA-Z_]+$") or
