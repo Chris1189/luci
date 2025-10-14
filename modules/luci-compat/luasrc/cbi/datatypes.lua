@@ -219,7 +219,7 @@ function macaddr(val)
 end
 
 function macrange(val)
-	local range, _, mac1, _, mac2 = val:match("^(([0-9a-fA-F]{1,2}[:-]){5}[0-9a-fA-F]{1,2})%-(([0-9a-fA-F]{1,2}[:-]){5}[0-9a-fA-f]{1,2})")
+	local mac1, mac2 = val:match("^(%x%x[:%-]%x%x[:%-]%x%x[:%-]%x%x[:%-]%x%x[:%-]%x%x)%-(%x%x[:%-]%x%x[:%-]%x%x[:%-]%x%x[:%-]%x%x[:%-]%x%x)$")
 
 	if ip.checkmac(mac1) and ip.checkmac(mac2) then
 		return true
