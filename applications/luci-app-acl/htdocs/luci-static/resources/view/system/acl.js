@@ -253,6 +253,25 @@ return view.extend({
 		};
 		o.validate = function(section_id, value) {
 			const variant = this.map.lookupOption('_variant', section_id)[0];
+			const pw_len = this.map.lookupOption('pw_length', section_id)[0].formvalue(section_id);
+			const ul = this.map.lookupOption('uc_lc', section_id)[0].formvalue(section_id);
+			const containsUpperAndLower = (/(?=.*[a-z])(?=.*[A-Z])/.test(value));
+			const digits = this.map.lookupOption('digits', section_id)[0].formvalue(section_id);
+			const containsDigits = (/[0-9]/.test(value));
+			const sc = this.map.lookupOption('special_characters', section_id)[0].formvalue(section_id);
+			const containsSpecialCharacters = (/[^A-Z-a-z0-9]/.test(value));
+
+			if (value.length < pw_len)
+				return _('Required password length is %s characters').format(pw_len);
+
+			if (digits == '1' && !containsDigits)
+				return _('The password must contain at least one digit');
+
+			if (ul == '1' && !containsUpperAndLower)
+				return _('The password must contain at least one upper and lowercase characters');
+
+			if (sc == '1' && !containsSpecialCharacters)
+				return _('The password must contain at least one special characters');
 
 			switch (value.substring(0, 3)) {
 			case '$p$':
@@ -285,6 +304,51 @@ return view.extend({
 			uci.set('rpcd', section_id, 'password', value);
 		};
 		o.remove = function() {};
+
+		o = s.option(form.Value, 'pw_length', _('Minimum password length'));
+		o.modalonly = true;
+		o.optional = false;
+		o.datatype = 'uinteger';
+		o.default = 8;
+		o.depends('_variant', 'crypted');
+
+		o = s.option(form.Flag, 'digits', _('Digits'));
+		o.modalonly = true;
+		o.default = o.enabled;
+		o.depends('_variant', 'crypted');
+
+		o = s.option(form.Flag, 'uc_lc', _('Upper / lower case characters'));
+		o.modalonly = true;
+		o.default = o.enabled;
+		o.depends('_variant', 'crypted');
+
+		o = s.option(form.Flag, 'special_characters', _('Special characters'));
+		o.modalonly = true;
+		o.default = o.enabled;
+		o.depends('_variant', 'crypted');
+
+		o = s.option(form.Flag, 'pw_expiration', _('Password expiration'));
+		o.modalonly = true;
+		o.default = o.disabled;
+		o.depends('_variant', 'crypted');
+
+		o = s.option(form.Value, 'valid_date', _('Valid until'));
+		o.modalonly = true;
+		o.datatype = 'dateyyyymmdd';
+		o.validate = function(section_id, value) {
+			const now = Date.now;
+			const valid_date = Date.parse(value);
+
+			if (valid_date <= now)
+				return _('Password already expired. Set on a later date');
+			return true;
+		};
+		o.write = function(section_id, value) {
+			const valid_date = Date.parse(value);
+
+			uci.set('rpcd', section_id, 'valid_date', valid_date);
+		}
+		o.depends('pw_expiration', '1');
 
 		o = s.option(form.Value, 'timeout', _('Session timeout'));
 		o.default = '300';
